@@ -32,21 +32,20 @@ pipeline {
                 }
             }
         }
-        
         stage('Run Container') {
-            steps {
-                echo 'Running container for testing...'
-                script {
-                    sh '''
-                        docker rm -f test-container 2>/dev/null || true
-                        docker run -d --name test-container -p 8081:80 ${DOCKER_IMAGE}:${DOCKER_TAG}
-                        sleep 3
-                        curl -f http://localhost:8081 || exit 1
-                        echo "Container is running successfully!"
-                    '''
-                }
-            }
+    steps {
+        echo 'Running container for testing...'
+        script {
+            sh '''
+                docker rm -f test-container || true
+                docker run -d --name test-container -p 8081:80 my-web-app:9
+                sleep 3
+                curl -f http://host.docker.internal:8081
+            '''
         }
+    }
+}
+
         
         stage('Cleanup') {
             steps {
